@@ -10,5 +10,9 @@ public class Main {
         double[] capacities = {5, 3, 4, 6, 8, 9};
         FlowNetwork network = new FlowNetwork(v, froms, tos, capacities);
         System.out.println(network);
+
+        network.pushRelabel();
+
+        System.out.println(network);
     }
 }
