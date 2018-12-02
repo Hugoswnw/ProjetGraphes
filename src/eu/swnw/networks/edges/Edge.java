@@ -43,6 +43,11 @@ public class Edge {
         this.flow += flow;
     }
 
+    public double getCapacity() {
+        return capacity;
+    }
+
+
     @Override
     public String toString(){
         return from+"->"+to+" : "+flow+"/"+capacity;

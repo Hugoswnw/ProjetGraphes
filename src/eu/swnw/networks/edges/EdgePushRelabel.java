@@ -6,7 +6,6 @@ public class EdgePushRelabel extends Edge {
 
     private EdgePushRelabel inverted;
 
-
     public EdgePushRelabel(NodePushRelabel from, NodePushRelabel to, double flow, double capacity){
         super(from, to, flow, capacity);
 
@@ -41,10 +40,6 @@ public class EdgePushRelabel extends Edge {
         return inverted;
     }
 
-
-    public double getCapacity() {
-        return capacity;
-    }
 
 
 }

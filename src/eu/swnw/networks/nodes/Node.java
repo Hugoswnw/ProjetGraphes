@@ -1,34 +1,39 @@
 package eu.swnw.networks.nodes;
 
 import eu.swnw.networks.edges.Edge;
-import java.util.ArrayList;
+
+import java.util.HashMap;
 
 public class Node {
 
     protected String name;
-    protected ArrayList<Edge> edgesOut;
-    protected ArrayList<Edge> edgesIn;
+    protected HashMap<String, Edge> edgesOut;
+    protected HashMap<String, Edge> edgesIn;
 
     public Node( String name ) {
         this.name = name;
-        this.edgesOut = new ArrayList<Edge>();
-        this.edgesIn = new ArrayList<Edge>();
+        this.edgesOut = new HashMap<String, Edge>();
+        this.edgesIn = new HashMap<String, Edge>();
     }
 
-    public ArrayList<Edge> getEdgesIn() {
+    public HashMap<String, Edge> getEdgesIn() {
         return edgesIn;
     }
 
     public void addEdgeIn(Edge edge) {
-        this.edgesIn.add(edge);
+        this.edgesIn.put(edge.getFrom().name, edge);
     }
 
-    public ArrayList<Edge> getEdgesOut() {
+    public HashMap<String, Edge> getEdgesOut() {
         return edgesOut;
     }
 
     public void addEdgeOut(Edge edge) {
-        this.edgesOut.add(edge);
+        this.edgesOut.put(edge.getTo().name, edge);
+    }
+
+    public String getName() {
+        return name;
     }
 
 

@@ -13,6 +13,9 @@ public class NodePushRelabel extends Node {
         this.height = 0;
     }
 
+    public NodePushRelabel(Node v){
+        super(v.name);
+    }
 
     public double getExcess() {
         return excess;
@@ -30,6 +33,11 @@ public class NodePushRelabel extends Node {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    @Override
+    public String toString(){
+        return name+"("+height+" - "+excess+")";
     }
 
 }

@@ -3,40 +3,42 @@ package eu.swnw.networks;
 import eu.swnw.networks.edges.Edge;
 import eu.swnw.networks.nodes.Node;
 
+import java.util.HashMap;
+
 public class Network {
 
-    protected Node[] vertexes;
+    protected HashMap<String, Node> nodes;
     protected Edge[] edges;
     protected Node source, sink;
 
 
-    public Network(Node[] vertexes, Edge[] edges, Node source, Node sink){
-        this.vertexes = vertexes;
+    public Network(HashMap<String, Node> nodes, Edge[] edges, Node source, Node sink){
+        this.nodes = nodes;
         this.edges = edges;
         this.sink = sink;
         this.source = source;
     }
 
-    public Network(String[] v, int[] froms, int[] tos, double[] capacities){
-        this.vertexes = new Node[v.length];
+    public Network(String[] v, String[] froms, String[] tos, double[] capacities, String source, String sink){
+        this.nodes = new HashMap<String, Node>();
         for(int i = 0; i<v.length; i++)
-            vertexes[i] = new Node(v[i]);
+            this.nodes.put(v[i], new Node(v[i]));
 
         this.edges = new Edge[froms.length];
         for(int i = 0; i<froms.length; i++) {
-            Edge e = new Edge(vertexes[froms[i]], vertexes[tos[i]], 0.0, capacities[i]);
+            Edge e = new Edge(nodes.get(froms[i]), nodes.get(tos[i]), 0.0, capacities[i]);
             edges[i] = e;
         }
 
-        this.source = vertexes[0];
-        this.sink = vertexes[vertexes.length-1];
+        this.source = nodes.get(source);
+        this.sink = nodes.get(sink);
     }
 
 
     @Override
     public String toString(){
-        String str = "Vertexes : \n";
-        for ( Node v : vertexes ) {
+        String str = "nodes : \n";
+        for ( Node v : nodes.values() ) {
             str += " "+v;
         }
         str += "\n source : "+source;
