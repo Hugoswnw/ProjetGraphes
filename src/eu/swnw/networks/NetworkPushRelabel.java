@@ -54,7 +54,7 @@ public class NetworkPushRelabel extends Network{
         return new NetworkPushRelabel(nodes, edges, nodes.get(G.source.getName()),  nodes.get(G.sink.getName()));
     }
 
-    public void pushRelabel(){
+    public void preflot(){
         init();
         boolean stop = false;
         while(!stop){

@@ -13,6 +13,10 @@ public class NodeRequest extends Node{
         return request;
     }
 
+    public void incrementRequest(int request){
+        this.request += request;
+    }
+
     @Override
     public String toString(){
         return name+"(r"+request+")";

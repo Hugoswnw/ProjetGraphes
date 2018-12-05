@@ -12,11 +12,11 @@ public class Main {
         String[] tos        = {"1", "2", "2", "3", "3", "t"};
         int[] capacities = { 5,   3,   4,   6,   8,   9 };
         Network network = new Network(v, froms, tos, capacities, "s", "t");
-        network.addFlowLimit(6);
+        network.constructionEtape1(6);
         System.out.println(network);
 
         NetworkPushRelabel solved = NetworkPushRelabel.networkToNPR(network);
-        solved.pushRelabel();
+        solved.preflot();
         //System.out.println(solved);
         System.out.println(NetworkPushRelabel.NPRtoNetwork(solved));
     }
