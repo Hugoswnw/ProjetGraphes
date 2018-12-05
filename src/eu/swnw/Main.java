@@ -17,7 +17,7 @@ public class Main {
 
         NetworkPushRelabel solved = NetworkPushRelabel.networkToNPR(network);
         solved.pushRelabel();
-        System.out.println(solved);
+        //System.out.println(solved);
         System.out.println(NetworkPushRelabel.NPRtoNetwork(solved));
     }
 }

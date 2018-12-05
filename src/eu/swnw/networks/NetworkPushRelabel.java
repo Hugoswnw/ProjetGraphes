@@ -58,8 +58,8 @@ public class NetworkPushRelabel extends Network{
         init();
         boolean stop = false;
         while(!stop){
+            stop = true;
             for(Node n : nodes.values()){
-                stop = true;
                 NodePushRelabel u = (NodePushRelabel) n;
                 if(preconRelabel(u)) {
                     relabel(u);
