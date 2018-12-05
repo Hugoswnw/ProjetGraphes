@@ -6,7 +6,7 @@ public class EdgePushRelabel extends Edge {
 
     private EdgePushRelabel inverted;
 
-    public EdgePushRelabel(NodePushRelabel from, NodePushRelabel to, double flow, double capacity){
+    public EdgePushRelabel(NodePushRelabel from, NodePushRelabel to, int flow, int capacity){
         super(from, to, flow, capacity);
 
         this.inverted = new EdgePushRelabel();
@@ -25,13 +25,13 @@ public class EdgePushRelabel extends Edge {
     }
 
     @Override
-    public void setFlow(double flow){
+    public void setFlow(int flow){
         this.flow = flow;
         this.inverted.flow = -flow;
     }
 
     @Override
-    public void incrementFlow(double flow){
+    public void incrementFlow(int flow){
         this.flow += flow;
         this.inverted.flow -= flow;
     }

@@ -6,10 +6,10 @@ public class Edge {
 
     protected Node from;
     protected Node to;
-    protected double flow;
-    protected double capacity;
+    protected int flow;
+    protected int capacity;
 
-    public Edge(Node from, Node to, double flow, double capacity){
+    public Edge(Node from, Node to, int flow, int capacity){
         this.from = from;
         this.to = to;
         this.flow = flow;
@@ -31,19 +31,19 @@ public class Edge {
         return to;
     }
 
-    public double getFlow() {
+    public int getFlow() {
         return flow;
     }
 
-    public void setFlow(double flow){
+    public void setFlow(int flow){
         this.flow = flow;
     }
 
-    public void incrementFlow(double flow){
+    public void incrementFlow(int flow){
         this.flow += flow;
     }
 
-    public double getCapacity() {
+    public int getCapacity() {
         return capacity;
     }
 

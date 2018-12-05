@@ -3,7 +3,7 @@ package eu.swnw.networks.nodes;
 public class NodePushRelabel extends Node {
 
 
-    private double excess;
+    private int excess;
     private int height;
 
 
@@ -17,15 +17,15 @@ public class NodePushRelabel extends Node {
         super(v.name);
     }
 
-    public double getExcess() {
+    public int getExcess() {
         return excess;
     }
 
-    public void setExcess(double excess) {
+    public void setExcess(int excess) {
         this.excess = excess;
     }
 
-    public void incrementExcess(double excess){ this.excess+=excess; }
+    public void incrementExcess(int excess){ this.excess+=excess; }
 
     public int getHeight() {
         return height;
@@ -37,7 +37,7 @@ public class NodePushRelabel extends Node {
 
     @Override
     public String toString(){
-        return name+"("+height+" - "+excess+")";
+        return name+"(h"+height+"-e"+excess+")";
     }
 
 }

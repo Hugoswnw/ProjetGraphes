@@ -10,10 +10,14 @@ public class Main {
         String[] v  = {"s", "1", "2", "3", "t"};
         String[] froms      = {"s", "s", "1", "1", "2", "3"};
         String[] tos        = {"1", "2", "2", "3", "3", "t"};
-        double[] capacities = { 5,   3,   4,   6,   8,   9 };
+        int[] capacities = { 5,   3,   4,   6,   8,   9 };
         Network network = new Network(v, froms, tos, capacities, "s", "t");
-
+        network.addFlowLimit(6);
         System.out.println(network);
-        System.out.println(NetworkPushRelabel.networkToNPR(network));
+
+        NetworkPushRelabel solved = NetworkPushRelabel.networkToNPR(network);
+        solved.pushRelabel();
+        System.out.println(solved);
+        System.out.println(NetworkPushRelabel.NPRtoNetwork(solved));
     }
 }
