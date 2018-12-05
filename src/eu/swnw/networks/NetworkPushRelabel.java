@@ -112,7 +112,7 @@ public class NetworkPushRelabel extends Network{
         e.incrementFlow(d);
         u.incrementExcess(-d);
         v.incrementExcess(d);
-        System.out.println("-- relabel "+u+" "+v);
+        System.out.println("-- relabel "+u+" -> "+v);
     }
 
     private boolean preconRelabel(NodePushRelabel u){
