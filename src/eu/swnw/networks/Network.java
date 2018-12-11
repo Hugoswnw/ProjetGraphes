@@ -36,11 +36,13 @@ public class Network {
     }
 
     //Etape 1
-    public void constructionEtape1(int value){
+    public Network constructionEtape1(int value){
         Node newSource = new Node(source.getName()+"new");
         this.nodes.put(newSource.getName(), newSource);
         this.edges.add(new Edge(newSource, this.source, 0, value));
         this.source = newSource;
+
+        return this;
     }
 
     public static Network constructionEtape2(NetworkRequest G){
