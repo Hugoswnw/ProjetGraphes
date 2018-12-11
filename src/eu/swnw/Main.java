@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
 
         try {
-            Grid g = Grid.gridFromFile("data/exemple3.txt").calculateSums();
+            Grid g = Grid.gridFromFile("data/exemple.txt").calculateSums();
 
             NetworkMin g1 = g.constructionEtape4();
             System.out.println(g1);

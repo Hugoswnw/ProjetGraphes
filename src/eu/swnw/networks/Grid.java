@@ -116,8 +116,8 @@ public class Grid {
 
         for (int i = 0; i < lines+1; i++){
             for (int j = 0; j < columns+1; j++){
-                //System.out.print((result[i][j])+"  ");
-                System.out.print((result[i][j]-((int)values[i][j]))+"  ");
+                System.out.print((result[i][j])+"  ");
+                //System.out.print((result[i][j]-((int)values[i][j]))+"  ");
             }
             System.out.println();
         }
