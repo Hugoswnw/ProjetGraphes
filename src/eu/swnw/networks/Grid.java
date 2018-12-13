@@ -100,11 +100,13 @@ public class Grid {
     public void printResult(Network G){
 
         for(Edge e : G.nodes.get("s").getEdgesOut().values()){
-            if(e.getTo().getName()!="r") {
-                int i = Character.getNumericValue(e.getTo().getName().charAt(0));
+            char numu = e.getTo().getName().charAt(0);
+            if(Character.isDigit(numu)) {
                 for (Edge e2 : e.getTo().getEdgesOut().values()) {
-                    if (e2.getTo().getName() != "r") {
-                        int j = Character.getNumericValue(e2.getTo().getName().charAt(0));
+                    char numv = e2.getTo().getName().charAt(0);
+                    if (Character.isDigit(numv)) {
+                        int i = Character.getNumericValue(numu);
+                        int j = Character.getNumericValue(numv);
                         result[i][j] += e2.getFlow();
                         result[i][columns] += e2.getFlow();
                         result[lines][j] += e2.getFlow();
@@ -116,8 +118,8 @@ public class Grid {
 
         for (int i = 0; i < lines+1; i++){
             for (int j = 0; j < columns+1; j++){
-                System.out.print((result[i][j])+"  ");
-                //System.out.print((result[i][j]-((int)values[i][j]))+"  ");
+                //System.out.print((result[i][j])+"  ");
+                System.out.print((result[i][j]-((int)values[i][j]))+"  ");
             }
             System.out.println();
         }

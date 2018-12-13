@@ -28,7 +28,7 @@ public class NetworkMin extends Network{
                 Edge newEdge = new Edge(nodes.get(from.getName()), nodes.get(toKey), toEdge.getFlow(), toEdge.getCapacity()-toEdge.getMin());
 
                 ((NodeRequest) newEdge.getTo()).incrementRequest(-toEdge.getMin());
-                ((NodeRequest) newEdge.getFrom()).incrementRequest(toEdge.getMin());
+                ((NodeRequest) newEdge.getFrom()).incrementRequest(+toEdge.getMin());
 
                 edges.add(newEdge);
             }

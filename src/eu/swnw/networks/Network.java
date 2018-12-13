@@ -45,6 +45,11 @@ public class Network {
         return this;
     }
 
+    public Network constructionEtape1_2(int value){
+        this.nodes.get("snew").getEdgesOut().get("s").setCapacity(value);
+        return this;
+    }
+
     public static Network constructionEtape2(NetworkRequest G){
         return NetworkRequest.constructionEtape2(G);
     }

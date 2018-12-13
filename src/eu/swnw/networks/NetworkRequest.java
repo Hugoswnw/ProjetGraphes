@@ -15,16 +15,21 @@ public class NetworkRequest extends Network {
     public static Network constructionEtape2(NetworkRequest G) {
         HashMap<String, Node> nodes = new HashMap<String, Node>();
         ArrayList<Edge> edges = new ArrayList<Edge>();
-        Node requests = new Node("r");
+        Node newSink = new Node(G.sink.getName()+"new");
+        Node newSource = new Node(G.source.getName()+"new");
 
-        nodes.put(requests.getName(), requests);
+
+        nodes.put(newSink.getName(), newSink);
+        nodes.put(newSource.getName(), newSource);
         for (Node n : G.nodes.values()) {
             nodes.put(n.getName(), new Node(n.getName()));
             int request = ((NodeRequest) n).getRequest();
-            if (request < 0)
-                edges.add(new Edge(requests, nodes.get(n.getName()), 0, -request));
-            else
-                edges.add(new Edge(nodes.get(n.getName()), requests, 0, request));
+            if (request < 0) {
+                edges.add(new Edge(newSource, nodes.get(n.getName()), 0, -request));
+            }
+            else {
+                edges.add(new Edge(nodes.get(n.getName()), newSink, 0, request));
+            }
 
         }
         for (Node from : G.nodes.values()) {
@@ -34,7 +39,7 @@ public class NetworkRequest extends Network {
                 edges.add(newEdge);
             }
         }
-        return new Network(nodes, edges, nodes.get(G.source.getName()), nodes.get(G.sink.getName()));
+        return new Network(nodes, edges, newSource, newSink);
     }
 
     public static NetworkRequest constructionEtape3(NetworkMin G) {

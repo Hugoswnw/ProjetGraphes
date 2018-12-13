@@ -53,4 +53,7 @@ public class Edge {
         return from+"->"+to+" : "+flow+"/"+capacity;
     }
 
+    public void setCapacity(int value) {
+        this.capacity=value;
+    }
 }

@@ -17,17 +17,17 @@ public class Main {
                 NetworkRequest g2 = NetworkMin.constructionEtape3(g1);
                 Network g3 = Network.constructionEtape2(g2);
                 NetworkPushRelabel pr = NetworkPushRelabel.networkToNPR(g3);
+                pr.preflot();
                 Network network = NetworkPushRelabel.NPRtoNetwork(pr);
-
-                g.print();
-
                 if(args.length>1 && args[1].equals("--debug")){
                     System.out.println(g1);
                     System.out.println(g2);
                     System.out.println(g3);
-                    pr.preflot();
+                    System.out.println(network);
                 }
 
+
+                g.print();
                 g.printResult(network);
 
             } catch (Exception e) {
