@@ -8,7 +8,7 @@ public class Main {
 
         if(args.length>0){
             try {
-                boolean debug = (args.length>1 && args[1].equals("--debug"));
+                boolean debug = (args.length>1 && args[1].equals("-debug"));
                 Grid g = Grid.gridFromFile(args[0]).calculateSums();
 
                 NetworkMin g1 = g.constructionEtape4();
@@ -28,18 +28,18 @@ public class Main {
                     System.out.println(g2);
                     System.out.println(g3);
                     System.out.println(network);
+                    System.out.println("Fixed value : "+fixedFlow%Math.max(g.getColumns(), g.getLines()));
+                    g.printRelativeResult(network);
                 }
 
                 g.print();
-                System.out.println("Fixed value : "+fixedFlow%Math.max(g.getColumns(), g.getLines()));
-                g.printRelativeResult(network);
                 g.printResult(network);
 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("usage: java -jar <jar> <path> [--debug]");
+            System.out.println("usage: java -jar <jar> <path> [-debug]");
         }
 
     }

@@ -283,7 +283,7 @@ On obtient le réseau R' suivant :
 Réseau R'
 \end{center}
 
-La complexité de cette étape est en \textbf{O(n+m)}, où n représente le nombre de sommets et m le nombre d'arcs, puisque chaque sommet se voit attribuer une nouvelle demande, fonction des valeurs minimum des arcs auxquels ce sommet est adjacent. Il faut donc, pour chaque sommet, ajuster la valeur de sa demande en parcourant ses différents arcs, puis modifier les capacités de ces derniers.
+La complexité de cette étape est en \textbf{O(n+m)}, où n représente le nombre de sommets et m le nombre d'arcs, puisque chaque sommet se voit attribuer une nouvelle demande, fonction des valeurs minimum des arcs auxquels ce sommet est adjacent. Il faut donc, pour chaque sommet, ajuster la valeur de sa demande en parcourant ses différents arcs, et modifier les capacités de ces derniers.
 
 \subsection{Etape 4}
 
@@ -356,6 +356,10 @@ Chaque case du tableau est ainsi représentée par un arc valué, dont la valuat
 \section{Implémentation}
 L'implémentation du projet devant être réalisée en Java, nous avons décidé d'utiliser une approche objet, dont les apports et répercussions sur les algorithmes développés seront ici présentés.
 
+Pour compiler le projet, le script shell \textbf{compile.sh} doit être éxecuté à la racine du projet. Un jar précompilé \textbf{projet.jar} est fourni. 
+
+Pour lancer le programme il faut utiliser cette commande : \textit{java -jar projet.jar path [-debug]}. path étant le chemin vers le fichier de tableau et [-debug] facultatif (affichages intermédiaires). Plusieurs fichiers d'exemple sont disponibles dans le dossier \textit{data}. De plus un fichier python permet de générer aléatoirement un nouveau tableau : \textit{python generateData.py 20 15}. Cette commande permet de générer un tableau 20x15 dans la sortie standard, redirigeable vers un fichier.
+
 \subsection{Structure de données}
 \subsubsection{Classes de base}
 Pour stocker notre graphe, nous avons utilisé une conception objet assez classique, dont voici le diagramme UML non exhaustif :
@@ -364,19 +368,19 @@ Pour stocker notre graphe, nous avons utilisé une conception objet assez classi
     Diagramme UML non exhaustif de Node, Edge et Network
 \end{center}
 \hfill \break
-Une classe a été créée pour chaque type d'élément : Noeud (Node), Arc (Edge) et Réseau (Network). Tout les arcs et les noeuds sont stockés dans le réseau. Le réseau contient aussi les références vers les noeuds \textit{source} et \textit{puit}.
+Une classe a été créée pour chaque type d'élément : Noeud (Node), Arc (Edge) et Réseau (Network). Tout les arcs et les noeuds sont stockés dans le réseau. Le réseau contient aussi les références vers les noeuds \textit{source} et \textit{puits}.
 
 
 Cependant, il existe aussi des liens directs entre les noeuds et leurs arcs associés et vice-versa. Il faut noter que les listes d'objets sont implémentées ici à travers des Maps, qui associent une clé à une valeur. Par exemple pour la liste \textit{nodes} dans Network, la clé est le nom du noeud. Dans Node, les listes d'arcs sortants et d'arcs sortants ont pour clé le nom du noeud opposé. Ce système de clés permet d'optimiser certains algorithmes et nous sera utile, comme expliqué par la suite.
 
-Toutes ces réferences entre les objets peuvent sembler lourdes mais elles ont, à notre avis, plus d'avantages que d'inconvénients : 
+Toutes ces références entre les objets peuvent sembler lourdes mais elles ont, à notre avis, plus d'avantages que d'inconvénients : 
 
-D'une part, si l'on veut reconstruire un graphe identique, il faut reconstruire toutes les réferences. De plus, cette implémentation requiert légèrement plus de mémoire. Ce désavantage est grandement limité puisque qu'aucun objet n'est dupliqué, uniquement leurs références. 
+D'une part, si l'on veut reconstruire un graphe identique, il faut reconstruire toutes les références. De plus, cette implémentation requiert légèrement plus de mémoire. Ce désavantage est grandement limité puisque qu'aucun objet n'est dupliqué, uniquement leurs références. 
 
 D'autre part, nous avons accès à différentes représentations d'un graphe en machine dans la même structure de données. Dans Network, nous avons une liste des noeuds et des arcs. Dans Node, une liste des prédécesseurs et des successeurs. Enfin dans Edge, nous avons accès aux noeuds entrants et sortants.
 
 \subsubsection{Classes dérivées}
-D'une étape à l'autre, le type de graphe peut changer, c'est à dire qu'il peut porter des informations supplémentaires sur ses noeuds ou ses arcs. Pour représenter ceci, et garder un code plutôt factorisé, chaque nouveau type est un héritier de la classe de base. Les types de graphes sont donc représentés à travers différentes classes. Les méthodes de conversion d'une étape à l'autre sont donc codées dans les classes associées, soit en \textit{static}, accessible partout, soit en méthode de classe.
+D'une étape à l'autre, le type de graphe peut changer, c'est-à-dire qu'il peut porter des informations supplémentaires sur ses noeuds ou ses arcs. Pour représenter ceci, et garder un code plutôt factorisé, chaque nouveau type est un héritier de la classe de base. Les types de graphes sont donc représentés à travers différentes classes. Les méthodes de conversion d'une étape à l'autre sont donc codées dans les classes associées, soit en \textit{static}, accessible partout, soit en méthode de classe.
 
 \begin{center}
     \includegraphics[width=\linewidth]{uml2.png}
@@ -385,11 +389,24 @@ D'une étape à l'autre, le type de graphe peut changer, c'est à dire qu'il peu
 
 \subsection{Algorithmes et complexité} 
 \subsubsection{Algorithme général}
-L'algorithme général consiste à éxecuter chaque étape consécutivement, du chargement du fichier, jusqu'au préflot sur le graphe final. Cependant, pour l'étape 1, il faut tester plusieurs valeurs de flot afin d'obtenir des totaux satisfaisants.
+L'algorithme général consiste à exécuter chaque étape consécutivement, du chargement du fichier jusqu'au préflot sur le graphe final. Il faut cependant pour l'étape 1 tester plusieurs valeurs de flot afin d'obtenir des totaux satisfaisants.
 
- \textit{Note : On observe que la valeur de flot valide ne dépasse jamais la plus grande des dimensions du tableau, et s'en rapproche même. Il vaut mieux donc partir de la valeur maximum et s'arreter quand un résultat valide est trouvé pour obtenir une meilleure complexité au mieux.}
+ \textit{Note : On observe que la valeur de flot valide ne dépasse jamais la plus grande des dimensions du tableau, et s'en rapproche même. Il vaut donc mieux partir de la valeur maximum et s'arrêter quand un résultat valide est trouvé pour obtenir une meilleure complexité au mieux.}
+\hfill \break
 
-\subsubsection{Construction de l'étape 4}
+\begin{lstlisting}
+Main( String cheminGrille )
+    grille = ChargerGrille(cheminGrille)
+    G1 = ConstructionEtape4(grille)
+    G2 = ConstructionEtape3(G1)
+    Flot flot = max(nbColonnes, nbLignes)
+    Tant que (VerifierTotaux(G3)) et (f >= 0) faire :
+	    G3 = ConstructionEtape1(ConstructionEtape2(G2,flot))
+	    Preflot(G3)
+	    flot = flot + 1
+    Fin
+Fin
+\end{lstlisting}\subsubsection{Construction de l'étape 4}
 \begin{lstlisting}
 ConstructionEtape4( Grille g ): GrapheMinimums
     G = Graphe
@@ -409,7 +426,7 @@ ConstructionEtape4( Grille g ): GrapheMinimums
     retourner(G)
 Fin
 \end{lstlisting}
-\textbf{Complexité : O(l+h+lh)=O(lh).} l : Taille en ligne, h : Taille en hauteur
+\textbf{Complexité : O(l+h+lh)=O(lh)} où l : taille en ligne, h : taille en hauteur
 \hfill \break
 
 \subsubsection{Construction de l'étape 3}
@@ -429,8 +446,9 @@ ConstructionEtape3( GrapheMinimums G ): GrapheDemandes
     retourner(G')
 Fin
 \end{lstlisting}
-Reconstruction du graphe : \textbf{O(n+ns)=O(n+e)}. n : noeuds, s : successeurs de n, e : arcs
-\textit{Note : Ici, la source et le puit sont initialisées à des valeurs $-\infty$ et $+\infty$, contrairement à la description précédente. Le résultat est le même et permet une implémentation plus légère}
+Reconstruction du graphe : complexité en \textbf{O(n+ns)=O(n+e)} où n : noeuds, s : successeurs de n, e : arcs.
+
+\textit{Note : Ici, la source et le puits sont initialisés à des valeurs $-\infty$ et $+\infty$, contrairement à la description précédente. Le résultat est le même et permet une implémentation plus légère.}
 \hfill \break
 
 \subsubsection{Construction de l'étape 2}
@@ -453,7 +471,7 @@ ConstructionEtape2( GrapheDemandes G ): Graphe
 Fin
 
 \end{lstlisting}
-Reconstruction du graphe : \textbf{O(n+ns)=O(n+e)}. Même compléxité que l'étape 3.
+Reconstruction du graphe : \textbf{O(n+ns)=O(n+e)}. Même complexité que l'étape 3.
 \hfill \break
 
 \subsubsection{Construction de l'étape 1}
@@ -464,14 +482,14 @@ ConstructionEtape1( Graphe G, int valeur ): Graphe
 Fin
 \end{lstlisting}
 Cette fonction consiste juste à changer la capacité de l'arc s' vers s. La complexité est donc constante, en \textbf{O(1)}. 
-
+\hfill \break
 \subsubsection{Avantages et possibles améliorations de l'implémentation}
 Nous avons déjà vu que notre modèle objet permet une meilleure complexité. En effet en cumulant les structures de données, nous sacrifions un peu d'espace mémoire au profit d'optimisations. 
 
-La complexité générale est la somme des complexités de toutes les étapes. Cependant les étapes 2, 1, le préflot (O(n²+e)) et la récupération du résultat (O(lh+l+h) = O(lh))  sont répétés au maximum max(lignes, colonnes). La complexité générale reste donc polynomiale en O( 1 + lh + 2(n+e) + max(l,h)(n+e + 1 + lh)).
-Elle pourrait sans doute être améliorée en factorisant du code entre les étapes, et surtout en changeant la méthode pour récupérer le résultat sans réinitialiser tout le tableau à chaque itérations.
+La complexité générale est la somme des complexités de toutes les étapes. Cependant les étapes 2, 1, le préflot (O(n²+e)) et la récupération du résultat (O(lh+l+h) = O(lh))  sont répétées au maximum max(lignes, colonnes). La complexité générale reste donc polynomiale en O( 1 + lh + 2(n+e) + max(l,h)(n+e + 1 + lh)).
+Elle pourrait sans doute être améliorée en factorisant du code entre les étapes, et surtout en changeant la méthode pour récupérer le résultat sans réinitialiser tout le tableau à chaque itération.
 
-Enfin, même si notre implémentation est opérationnelle pour énormément d'exemples, il peut arriver que certains totaux en ligne et en colonnes ne soient pas suffisants (uniquement pour des tableaux dont les tailles en ligne et en colonne sont assez grandes et diférentes).
+Enfin, même si notre implémentation est opérationnelle pour la quasi-totalité des exemples, il peut arriver que certains totaux en ligne et en colonnes ne soient pas suffisants (uniquement dans le cas de tableaux dont les tailles en ligne et en colonne sont très grandes et diffèrent).
 \end{document}
 
 
