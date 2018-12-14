@@ -8,26 +8,31 @@ public class Main {
 
         if(args.length>0){
             try {
-                for (String s: args) {
-                    System.out.println(s);
-                }
+                boolean debug = (args.length>1 && args[1].equals("--debug"));
                 Grid g = Grid.gridFromFile(args[0]).calculateSums();
 
                 NetworkMin g1 = g.constructionEtape4();
                 NetworkRequest g2 = NetworkMin.constructionEtape3(g1);
-                Network g3 = Network.constructionEtape2(g2);
-                NetworkPushRelabel pr = NetworkPushRelabel.networkToNPR(g3);
-                pr.preflot();
-                Network network = NetworkPushRelabel.NPRtoNetwork(pr);
-                if(args.length>1 && args[1].equals("--debug")){
+                Network network, g3;
+                int fixedFlow = Math.max(g.getColumns(), g.getLines());
+                do {
+                    g3 = Network.constructionEtape2(g2).constructionEtape1(--fixedFlow%Math.max(g.getColumns(), g.getLines()));
+                    NetworkPushRelabel pr = NetworkPushRelabel.networkToNPR(g3);
+                    pr.preflot(debug);
+                    network = NetworkPushRelabel.NPRtoNetwork(pr);
+                    g.calculateResult(network);
+                }while (!g.checkSums(network) && fixedFlow>=0);
+
+                if(debug){
                     System.out.println(g1);
                     System.out.println(g2);
                     System.out.println(g3);
                     System.out.println(network);
                 }
 
-
                 g.print();
+                System.out.println("Fixed value : "+fixedFlow%Math.max(g.getColumns(), g.getLines()));
+                g.printRelativeResult(network);
                 g.printResult(network);
 
             } catch (Exception e) {

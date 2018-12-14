@@ -23,7 +23,7 @@ public class Grid {
         this.columns = columns;
 
         this.values = new double [lines+1][columns+1];
-        this.result = new int [lines+1][columns+1];
+
     }
 
     public static Grid gridFromFile(String path) throws Exception {
@@ -52,11 +52,6 @@ public class Grid {
                 double v = getValue(i, j);
                 this.values[i][columns] += v;
                 this.values[lines][j] += v;
-
-                int vint = (int) v;
-                this.result[i][j] = vint;
-                this.result[i][columns] += vint;
-                this.result[lines][j] += vint;
             }
         }
 
@@ -97,16 +92,24 @@ public class Grid {
         return new NetworkMin(nodes, edges, nodes.get("s"), nodes.get("t"));
     }
 
-    public void printResult(Network G){
+    public void calculateResult(Network G){
+        this.result = new int [lines+1][columns+1];
+        for (int i = 0; i < lines; i++) {
+            for (int j = 0; j<columns; j++) {
+                result[i][j] = (int) values[i][j];
+                result[i][columns] += (int) values[i][j];
+                result[lines][j] += (int) values[i][j];
+            }
+        }
 
         for(Edge e : G.nodes.get("s").getEdgesOut().values()){
-            char numu = e.getTo().getName().charAt(0);
-            if(Character.isDigit(numu)) {
+            String numu = e.getTo().getName();
+            if(Character.isDigit(numu.charAt(0))) {
+                int i = Integer.parseInt(numu.substring(0, numu.length()-1));
                 for (Edge e2 : e.getTo().getEdgesOut().values()) {
-                    char numv = e2.getTo().getName().charAt(0);
-                    if (Character.isDigit(numv)) {
-                        int i = Character.getNumericValue(numu);
-                        int j = Character.getNumericValue(numv);
+                    String numv = e2.getTo().getName();
+                    if(Character.isDigit(numv.charAt(0))) {
+                        int j = Integer.parseInt(numv.substring(0, numv.length()-1));
                         result[i][j] += e2.getFlow();
                         result[i][columns] += e2.getFlow();
                         result[lines][j] += e2.getFlow();
@@ -115,23 +118,52 @@ public class Grid {
                 }
             }
         }
+    }
+
+    public boolean checkSums(Network G){
+        for (int i = 0; i <= lines; i++){
+            if((result[i][columns]-((int)values[i][columns])<0)){
+                return false;
+            }
+        }
+        for (int j = 0; j <= columns; j++){
+            if((result[lines][j]-((int)values[lines][j])<0)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void printResult(Network G){
 
         for (int i = 0; i < lines+1; i++){
             for (int j = 0; j < columns+1; j++){
-                //System.out.print((result[i][j])+"  ");
+                System.out.print((result[i][j])+"  ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public void printRelativeResult(Network G){
+
+        for (int i = 0; i < lines+1; i++){
+            for (int j = 0; j < columns+1; j++){
                 System.out.print((result[i][j]-((int)values[i][j]))+"  ");
             }
             System.out.println();
         }
+        System.out.println();
     }
 
     public void print(){
         for (int i = 0; i < lines+1; i++){
             for (int j = 0; j < columns+1; j++){
-                System.out.print(values[i][j]+"  ");
+                System.out.printf("%.1f ", values[i][j]);
             }
             System.out.println();
         }
+        System.out.println();
     }
 
     public void setValue(int x, int y, double value){
@@ -142,6 +174,12 @@ public class Grid {
         return this.values[x][y];
     }
 
+    public int getLines() {
+        return lines;
+    }
 
+    public int getColumns() {
+        return columns;
+    }
 }
 

@@ -21,6 +21,8 @@ public class NetworkMin extends Network{
         for(Node n : G.nodes.values()) {
             nodes.put(n.getName(), new NodeRequest(n.getName(), 0));
         }
+        ((NodeRequest) nodes.get("s")).setRequest(Integer.MIN_VALUE);
+        ((NodeRequest) nodes.get("t")).setRequest(Integer.MAX_VALUE);
 
         for(Node from : G.nodes.values()) {
             for( String toKey : from.getEdgesOut().keySet()){

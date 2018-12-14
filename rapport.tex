@@ -15,6 +15,8 @@
 \usetikzlibrary{calc,shapes}
 \usetikzlibrary{arrows}
 \usepackage{array}
+\usepackage{xcolor}
+\usepackage[dvipsnames]{xcolor}
 \usepackage[table]{xcolor}
 \hypersetup{
 	colorlinks=true,       % false: boxed links; true: colored links
@@ -108,9 +110,9 @@ En limitant la capacité de l'arc joignant s à s' au flot de valeur exactement 
 \subsection{Etape 2}
 
 Dans cette deuxième étape, chaque sommet $i$ (incluant s et t) formule une demande entière $d_i$.
-On cherche ici à transformer notre réseau R initial en réseau R' tel que R admette un flot satisfaisant les demandes de tous les sommets (appelé aussi circulation) si et seulement si R' admet un flot de valeur fixé v.
+On cherche ici à transformer notre réseau R initial en réseau R' tel que R admette un flot satisfaisant les demandes de tous les sommets (appelé aussi circulation) si et seulement si R' admet un flot de valeur fixé v. 
 
-Passer de R à R' revient à précéder le sommet t d'un sommet t', dont les prédécesseurs sont les sommets de demande $d_i$ positive et les successeurs les sommets de demande $d_i$ négative. Les valuations sur ces nouveaux arcs correspondent aux valeurs des demandes.
+Passer de R à R' revient à ajouter un nouveau sommet s' (respectivement t') adjacent au sommet s (respectivement t) tel que s' (respectivement t') soit le prédécesseur (respectivement successeur) des sommets de demande négative (respectivement positive). Les valuations sur les nouveaux arcs correspondent aux valeurs absolues des demandes des sommets associés.
 
 En considérant le réseau R tel que défini en 2.1, augmenté de demandes (positives ou négatives) sur chacun de ses sommets, on obtient le réseau R' suivant :
 
@@ -128,7 +130,7 @@ En considérant le réseau R tel que défini en 2.1, augmenté de demandes (posi
   \node (top) at ($(1) + (90:.8)$) {4}; 
   \node (top) at ($(2) + (90:-.8)$) {-5}; 
   \node (top) at ($(3) + (90:.8)$) {-1}; 
-  \node (top) at ($(s) + (90:.8)$) {1};
+  \node (top) at ($(s) + (90:.8)$) {-1};
   \node (top) at ($(t) + (90:.8)$) {2};   
 
   
@@ -154,39 +156,39 @@ Réseau R (avec ajout des demandes)
 
   \node[main node] (1) {1};
   \node[main node] (s) [below left of=1] {s};
+  \node[main node] (s')[red] [left of=s] {s'};
   \node[main node] (2) [below right of=s] {2};
   \node[main node] (3) [below right of=1] {3};
-  \node[main node] (t')[red] [right of=3] {t'};
-  \node[main node] (t) [right of=t'] {t};
+  \node[main node] (t) [right of=3] {t};
+  \node[main node] (t')[red] [right of=t] {t'};
   
   \path[every node/.style={font=\sffamily\small}]
-    (s) edge node [above left] {2} (1)
+    (s) edge node [below right] {2} (1)
         edge node [below left] {4} (2)
-        edge[->,blue,out=90,in=110,distance=4cm] node{1} (t'.west)
+    (s') edge[blue] node {1} (s)
+         edge[below left, color=blue] node {5} (2)
+         edge[->,blue,distance=2cm] node{1} (3.west)
     (1) edge node {6} (3)
         edge node[left] {3} (2)
-        edge[bend left] node [below left] {3} (t')
-        edge[blue] node[below left] {4} (t')
+        edge[bend left] node [below left] {3} (t)
+        edge[->,olive,distance=1cm] node{4} (t')
     (2) edge node {1} (3)
-        edge [bend right] node {5} (t')
-    (3) edge node [above right] {7} (t')
-    (t') edge node [above right] {7} (t)
-         edge[bend left=65, color=blue] node [above left] {-5} (2)
-         edge[->,blue,bend left] node{-1} (3)
-    (t) edge [bend left, blue] node {2} (t')
+        edge [bend right] node {5} (t)
+    (3) edge node [above right] {7} (t)
+    (t) edge[olive] node {2} (t')
 
 
 \end{tikzpicture}
 
-Réseau R' (nouveaux arcs symbolisés en bleu)
+Réseau R' (demandes négatives en bleu ; demandes positives en vert)
 
 \end{center}
 \hfill \break
-Dans le réseau R', toutes les demandes sont nécessairement satisfaites puisque les capacités des nouveaux arcs sont fixées par les demandes des sommets respectifs auxquels ils sont adjacents. Les demandes positives ont été substituées par des arcs avant; les demandes négatives par des arcs arrière.
+Dans le réseau R', toutes les demandes sont nécessairement satisfaites puisque les capacités des nouveaux arcs sont fixées par les demandes des sommets respectifs auxquels ils sont adjacents. Les demandes positives ont été substituées par des arcs avant valués vers le sommet t'; les demandes négatives redirigées en partance du sommet s', puisque ces demandes traduisent un besoin/manque devant être satisfait. 
 
-[JUSTIFIER]
+La résolution de ce problème revient à : (1) ajouter deux sommets s' et t' ; (2) parcourir chaque sommet du réseau; (3) vérifier la valeur de sa demande; (4) ajouter un arc orienté de $s'$ vers le sommet traité si la demande est négative; (4bis) ajouter un arc orienté du sommet traité vers $t'$ si la demande est positive. 
 
-Ce problème peut être résolu en temps polynomial, puisqu'il s'agit de parcourir chaque sommet du réseau un à un, et de lui ajouter un arc entrant (respectivement sortant) depuis (respectivement vers) le sommet t' : la complexité ici obtenue est donc en O(n), où n représente le nombre de sommets.
+Il peut donc être résolu en temps polynomial : \textbf{complexité en O(n)}, où n représente le nombre de sommets.
 
 \subsection{Etape 3}
 
@@ -194,11 +196,30 @@ Dans cette troisième étape, les flots sont désormais bornés par un minimum e
 
 La nouvelle configuration du réseau R' est telle que le flot circulant dans R' satisfait les contraintes de tous les arcs si et seulement si R admet une circulation.
 
-Chaque arc $ij$ se voit attribuer une nouvelle capacité $c_i_j'$ = $|min_i_j$ - $c_i_j|$. Les demandes des sommets $i$ et $j$ de l'arc $ij$ sont renouvelées ainsi : 
-$i$ = $i$ + $min_i_j$ ; 
-$j$ = $j$ - $min_i_j$
+Chaque arc $ij$ se voit attribuer une nouvelle capacité $c_i_j'$ = $c_i_j$ - $min_i_j$. On a alors :
+\hfill \break
+\begin{center}
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3cm,
+                    thick,main node/.style={circle,draw,font=\sffamily\bfseries}]
+  \node[main node] (i) {$i$};
+  \node[main node] (j) [right of=i] {$j$};
+\path[every node/.style={font=\sffamily\small}]
+(i) edge node [below] {$c_i_j$ - $min_i_j$} (j)
+\end{tikzpicture}
+\end{center}
 
-On obtient, à partir du réseau R, le réseau R' suivant :
+\hfill \break
+Les demandes des sommets (hormis $s$ et $t$) sont ajustées par rapport aux capacités minimum des arcs. 
+Ainsi, la demande d'un tel sommet $i$ est telle que :
+$d_i$ = $\sum min$ $sortants$ $i$ - $\sum min$ $entrants$ $i$.
+
+La demande du sommet s est alors égale à $\sum demandes$ $négatives$.
+
+La demande du sommet t est alors égale à $\sum demandes$ $positives$.
+
+En reportant les minimums sur les demandes, les demandes sont nécessairement satisfaites (flot circulation) : on retrouve la configuration de notre réseau R' de l'étape 2, intégrant en plus une contrainte sur le flot circulant qui ne peut pas descendre en dessous de la borne inférieure (prise en compte dans la demande), ni dépasser la capacité maximum (nouvelle capacité bornée).
+
+Soit pour un réseau R (les capacités ont ici été modifiées pour répondre au besoin du problème) :
 
 \begin{center}
 \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3cm,
@@ -209,28 +230,29 @@ On obtient, à partir du réseau R, le réseau R' suivant :
   \node[main node] (2) [below right of=s] {2};
   \node[main node] (3) [below right of=1] {3};
   \node[main node] (t) [right of=3] {t};
-  \node (top) at ($(1) + (90:.8)$) {4}; 
-  \node (top) at ($(2) + (90:-.8)$) {-5}; 
-  \node (top) at ($(3) + (90:.8)$) {-1}; 
-  \node (top) at ($(s) + (90:.8)$) {1};
-  \node (top) at ($(t) + (90:.8)$) {2};   
+  \node (top) at ($(1) + (90:.8)$); 
+  \node (top) at ($(2) + (90:-.8)$); 
+  \node (top) at ($(3) + (90:.8)$); 
+  \node (top) at ($(s) + (90:.8)$);
+  \node (top) at ($(t) + (90:.8)$);   
 
   
   \path[every node/.style={font=\sffamily\small}]
-    (s) edge node [above left] {(2,4)} (1)
-        edge node [below left] {(4,5)} (2)
+    (s) edge node [above left] {(13,15)} (1)
+        edge node [below left] {(6,8)} (2)
     (1) edge node {(6,7)} (3)
         edge node[left] {(3,7)} (2)
         edge [bend left] node {(3,6)} (t)
-    (2) edge node {(1,4)} (3)
-        edge [bend right] node {(5,8)} (t)
+    (2) edge node [below right] {(1,4)} (3)
+        edge [bend right] node [below right] {(4,8)} (t)
     (3) edge node [above right] {(7,8)} (t)
 
 \end{tikzpicture}
 
 Réseau R (chaque arc $ij$ est valué par un ensemble (x,y) où x = $min_i_j$ et y = $c_i_j$)
-
 \end{center}
+\hfill \break
+On obtient le réseau R' suivant :
 \begin{center}
 \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3cm,
                     thick,main node/.style={circle,draw,font=\sffamily\bfseries}]
@@ -240,11 +262,11 @@ Réseau R (chaque arc $ij$ est valué par un ensemble (x,y) où x = $min_i_j$ et
   \node[main node] (2) [below right of=s] {2};
   \node[main node] (3) [below right of=1] {3};
   \node[main node] (t) [right of=3] {t};
-  \node (top) at ($(1) + (90:.8)$) {4-(3+6+3)}; 
-  \node (top) at ($(2) + (90:-.8)$) {-5-(1+5)}; 
-  \node (top) at ($(3) + (90:.8)$) {-1+7}; 
-  \node (top) at ($(s) + (90:.8)$) {1+2+4};
-  \node (top) at ($(t) + (90:.8)$) {2-(3+7+5)}; 
+  \node (top) at ($(1) + (90:.8)$)[red] {-1}; 
+  \node (top) at ($(2) + (90:-.8)$)[red] {-4}; 
+  \node (top) at ($(3) + (90:.8)$)[red] {0}; 
+  \node (top) at ($(s) + (90:.8)$)[red] {-5};
+  \node (top) at ($(t) + (90:.8)$)[red] {0}; 
   
   \path[every node/.style={font=\sffamily\small}]
     (s) edge node [above left] {2} (1)
@@ -259,31 +281,16 @@ Réseau R (chaque arc $ij$ est valué par un ensemble (x,y) où x = $min_i_j$ et
 \end{tikzpicture}
 
 Réseau R'
-
 \end{center}
-\hfill \break
 
-Justification ?
-Algo polynomial ?
+La complexité de cette étape est en \textbf{O(n+m)}, où n représente le nombre de sommets et m le nombre d'arcs, puisque chaque sommet se voit attribuer une nouvelle demande, fonction des valeurs minimum des arcs auxquels ce sommet est adjacent. Il faut donc, pour chaque sommet, ajuster la valeur de sa demande en parcourant ses différents arcs, puis modifier les capacités de ces derniers.
 
 \subsection{Etape 4}
 
 Cette quatrième étape vise à formuler le problème Arrondis-2D en un problème d'arc-circulation.
 Notre entrée est ici une matrice M à n lignes et m colonnes, à valeur réelles.
 
-Une première étape consiste tout d'abord à transformer M, telles que ses valeurs soient comprises entre une borne inférieure et supérieure. Dans l'exemple qui nous est fourni, on obtient la matrice M' à partir de la matrice M donnée ci-contre :
-\hfill \break
-
-\begin{center}
-\begin{tabular}{ |c|c|c|c| }
- \hline
- 3.14 & 6.8 & 7.3 & 17.24 \\ \hline
- 9.6 & 2.4 & 0.7 & 12.7 \\ \hline
- 3.6 & 1.2 & 6.5 & 11.3 \\ \hline
- 16.34 & 10.4 & 14.5 & \\ \hline
-\end{tabular}
-Matrice M
-\end{center}
+Une première étape consiste tout d'abord à transformer M, telles que ses valeurs soient comprises entre une borne inférieure et supérieure. Dans l'exemple qui nous est fourni, on obtient la matrice M' donnée ci-contre, où la dernière ligne (respectivement colonne) représente les totaux des valeurs sur la ligne (respectivement colonne) traitée. 
 
 \begin{center}
 \begin{tabular}{ |c|c|c|x| }
@@ -297,42 +304,57 @@ Matrice M
  16-17 & 10-11 & 14-15 & \\
  \hline
 \end{tabular}
+
 Matrice M'
 \end{center}
-\hfill \break
-
-La dernière ligne (respectivement colonne) de la matrice M représente les totaux des valeurs sur la ligne (respectivement colonne) traitée. 
 
 Dans la mesure où la valeur du flot entrant est nécessairement égale à la valeur du flot sortant, l'astuce consiste ici à mapper le sommet s (source) aux sommets correspondant aux sommes en colonnes (dernière ligne) et le sommet t (puits) aux sommets correspondant aux sommes en lignes (dernière colonne), de telle sorte que la valeur du flot sortant de s soit égale à la valeur du flot arrivant à t. 
 
 Autrement dit, dans notre exemple, s pointe vers trois sommets distincts : s$i_1$, s$i_2$ et s$i_3$, et trois autres sommets distincts pointent vers t : s$_1_j$, s$_2_j$ et s$_3_j$. Dans cette nouvelle configuration, chacun des sommets du premier ensemble pointe vers chacun des sommets du deuxième ensemble, tel que présenté ci-contre :
 
+\hfill \break
 \begin{center}
 \begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3cm,
                     thick,main node/.style={circle,draw,font=\sffamily\bfseries}]
 
   \node[main node] (i1) {$_i_1$};
   \node[main node] (s) [below left of=i1] {s};
-  \node[main node] (i2) [below right of=s] {$_i_2$};
-  \node[main node] (i3) [right of=s] {$_i_3$};
-  \node[main node] (j1) [right of=i1] {$_j_1$};
-  \node[main node] (t) [right of=j2] {t};
-  \node[main node] (j2) [right of=i2] {$_j_2$};
-  \node[main node] (j3) [right of=i3] {$_j_3$};
+  \node[main node] (i3) [below right of=s] {$_i_3$};
+  \node[main node] (i2) [right of=s] {$_i_2$};
+  \node[main node] (1j) [right of=i1] {$_1_j$};
+  \node[main node] (2j) [right of=i2] {$_2_j$};
+  \node[main node] (3j) [right of=i3] {$_3_j$};
+  \node[main node] (t) [right of=2j] {t};
 
   \path[every node/.style={font=\sffamily\small}]
-    (s) edge node [above left] {} (i1)
-        edge node {} (i2)
-        edge node [below left] {} (i3)
-  
-    
+    (s) edge node [above left] {16-17} (i1)
+        edge node {10-11} (i2)
+        edge node [below left] {14-15} (i3)
+    (1j) edge node [above right] {17-18} (t)
+    (2j) edge node {12-13} (t)
+    (3j) edge node [below right] {11-12} (t)
+    (i1) edge node {3-4} (1j)
+         edge node [above=7] {9-10} (2j)
+         edge node {} (3j)
+    (i2) edge node [above right] {} (1j)
+         edge node {2-3} (2j)
+         edge node [below right] {} (3j)
+    (i3) edge node [above right] {} (1j)
+         edge node [right=16] {0-1} (2j)
+         edge node {6-7} (3j)   
 
 \end{tikzpicture}
 
 \end{center}
+\hfill \break
+
+\textit{NB: Pour des raisons de lisibilité, toutes les capacités n'ont pas été représentées.}
+\hfill \break
+
+Chaque case du tableau est ainsi représentée par un arc valué, dont la valuation est bornée entre deux arrondis (inférieur et supérieur). Dans la mesure où chaque case est mise en correspondance avec une ligne et une colonne données, et par extension entre la source (dernière ligne) et le puits (dernière colonne), la condition de conservation du flot est nécessairement respectée.
 
 \section{Implémentation}
-L'implémentation du projet devant être réalisée en Java, nous avons décidé d'utiliser une approche objet. Nous allons voir les apports d'une telle méthode et les impacts sur les algorithmes.
+L'implémentation du projet devant être réalisée en Java, nous avons décidé d'utiliser une approche objet, dont les apports et répercussions sur les algorithmes développés seront ici présentés.
 
 \subsection{Structure de données}
 \subsubsection{Classes de base}
@@ -341,17 +363,17 @@ Pour stocker notre graphe, nous avons utilisé une conception objet assez classi
     \includegraphics[width=\linewidth]{uml.png}
     Diagramme UML non exhaustif de Node, Edge et Network
 \end{center}
-Assez simplement, il y a une classe pour chaque type d'élément : Noeud, Arc et Réseau. Tout les arcs et les noeuds sont stockés dans le réseau. Le réseau contient aussi les références vers les noeuds \textit{source} et \textit{puit}.
+\hfill \break
+Une classe a été créée pour chaque type d'élément : Noeud (Node), Arc (Edge) et Réseau (Network). Tout les arcs et les noeuds sont stockés dans le réseau. Le réseau contient aussi les références vers les noeuds \textit{source} et \textit{puit}.
 
 
-Cependant, il existe aussi des liens directs entre les noeuds et leurs arcs associés et vice-versa. Il faut noter que les listes d'objets sont implémentées ici à travers des Maps, qui asocient une clé à une valeur. Par exemple pour la liste \textit{nodes} dans Network, la clé est le nom du noeud. Dans Node, les listes d'arcs sortants et d'arc sortant ont pour clé le nom du noeud opposé. Ce système de clés permet d'optimiser certains algorithmes et nous sera utile, comme expliqué par la suite.
-
+Cependant, il existe aussi des liens directs entre les noeuds et leurs arcs associés et vice-versa. Il faut noter que les listes d'objets sont implémentées ici à travers des Maps, qui associent une clé à une valeur. Par exemple pour la liste \textit{nodes} dans Network, la clé est le nom du noeud. Dans Node, les listes d'arcs sortants et d'arcs sortants ont pour clé le nom du noeud opposé. Ce système de clés permet d'optimiser certains algorithmes et nous sera utile, comme expliqué par la suite.
 
 Toutes ces réferences entre les objets peuvent sembler lourdes mais elles ont, à notre avis, plus d'avantages que d'inconvénients : 
 
-D'un coté si on veut reconstruire un graphe identique, il faut reconstruire toutes les réferences. De plus, cette implémentation requiert légèrement plus de mémoire. Ce désavantage est grandement limité puisque qu'aucun objet n'est dupliqué, uniquement leurs références. 
+D'une part, si l'on veut reconstruire un graphe identique, il faut reconstruire toutes les réferences. De plus, cette implémentation requiert légèrement plus de mémoire. Ce désavantage est grandement limité puisque qu'aucun objet n'est dupliqué, uniquement leurs références. 
 
-D'un autre coté, nous avons accès à différentes représentations d'un graphe en machine dans la même structure de données. Dans Network, nous avons une liste des noeuds et des arcs. Dans Node une liste des prédécesseurs et des successeurs. Enfin dans Edge, nous avons accès aux noeud entrant et sortant.
+D'autre part, nous avons accès à différentes représentations d'un graphe en machine dans la même structure de données. Dans Network, nous avons une liste des noeuds et des arcs. Dans Node, une liste des prédécesseurs et des successeurs. Enfin dans Edge, nous avons accès aux noeuds entrants et sortants.
 
 \subsubsection{Classes dérivées}
 D'une étape à l'autre, le type de graphe peut changer, c'est à dire qu'il peut porter des informations supplémentaires sur ses noeuds ou ses arcs. Pour représenter ceci, et garder un code plutôt factorisé, chaque nouveau type est un héritier de la classe de base. Les types de graphes sont donc représentés à travers différentes classes. Les méthodes de conversion d'une étape à l'autre sont donc codées dans les classes associées, soit en \textit{static}, accessible partout, soit en méthode de classe.
@@ -362,16 +384,94 @@ D'une étape à l'autre, le type de graphe peut changer, c'est à dire qu'il peu
 \end{center}
 
 \subsection{Algorithmes et complexité} 
+\subsubsection{Algorithme général}
+L'algorithme général consiste à éxecuter chaque étape consécutivement, du chargement du fichier, jusqu'au préflot sur le graphe final. Cependant, pour l'étape 1, il faut tester plusieurs valeurs de flot afin d'obtenir des totaux satisfaisants.
+
+ \textit{Note : On observe que la valeur de flot valide ne dépasse jamais la plus grande des dimensions du tableau, et s'en rapproche même. Il vaut mieux donc partir de la valeur maximum et s'arreter quand un résultat valide est trouvé pour obtenir une meilleure complexité au mieux.}
+
+\subsubsection{Construction de l'étape 4}
 \begin{lstlisting}
-grille = ChargementDuFichier(cheminDuFichier)
+ConstructionEtape4( Grille g ): GrapheMinimums
+    G = Graphe
+    G.ajouterNoeud(source)
+    G.ajouterNoeud(puit)
+    Pour chaque total ti en ligne, i de 0 a numLignes:
+        G.ajouterNoeud(ti)
+        G.ajouterArc(source->ti, min=round(ti), capacite=round(ti)+1)
+    Fin
+    Pour chaque total tj en ligne, j de 0 a numColonnes:
+        G.ajouterNoeud(tj)
+        G.ajouterArc(tj->puit, min=round(tj), capacite=round(tj)+1)
+    Fin
+    Pour chaque case ij, i de 0 a numLignes, j de 0 a numColonnes:
+        G.ajouterArc(ti->tj, min=round(ij), capacite=round(ij)+1)
+    Fin
+    retourner(G)
+Fin
+\end{lstlisting}
+\textbf{Complexité : O(l+h+lh)=O(lh).} l : Taille en ligne, h : Taille en hauteur
+\hfill \break
+
+\subsubsection{Construction de l'étape 3}
+\begin{lstlisting}
+ConstructionEtape3( GrapheMinimums G ): GrapheDemandes
+    G' = Graphe
+    Pour chaque Noeud n de G:
+        G'.ajouterNoeud(n, demande=0)
+    Fin
+    Pour chaque NoeudDemande u de G:
+        Pour chaque NoeudDemande v successeur de u:
+            G'.ajouterArc(u -> v, capacite=capacite(u,v)-min(u,v))
+            demande(u) = demande(u)+min(u,v)
+            demande(v) = demande(v)-min(u,v)
+        Fin
+    Fin
+    retourner(G')
+Fin
+\end{lstlisting}
+Reconstruction du graphe : \textbf{O(n+ns)=O(n+e)}. n : noeuds, s : successeurs de n, e : arcs
+\textit{Note : Ici, la source et le puit sont initialisées à des valeurs $-\infty$ et $+\infty$, contrairement à la description précédente. Le résultat est le même et permet une implémentation plus légère}
+\hfill \break
+
+\subsubsection{Construction de l'étape 2}
+\begin{lstlisting}
+ConstructionEtape2( GrapheDemandes G ): Graphe
+    G' = Graphe
+    s', t' = Noeud
+    G'.definirSource(s'), G'.definirPuit(t')
+    Pour chaque NoeudDemande n de G:
+        G'.ajouterNoeud(n)
+        Si demande(n)<0 Alors G'.ajouterArc(s' -> n, capacite=-demande(n))
+        Sinon G'.ajouterArc(n -> t', capacite=demande(n))
+    Fin
+    Pour chaque Noeud u de G:
+        Pour chaque Noeud v successeur de u:
+            G'.ajouterArc(u -> v, capacite=capacite(u,v))
+        Fin
+    Fin
+    retourner(G')
+Fin
 
 \end{lstlisting}
-\subsubsection{Algorithme général}
-L'algorithme général est assez simple. Il consiste à charger les données puis a exécuter consécutivement chaque étape. La complexité générale sera abordée à l'interieur des méthodes.
-\subsubsection{Construction de l'étape 4}
-\subsubsection{Construction de l'étape 3}
-\subsubsection{Construction de l'étape 2}
-\subsubsection{Construction de l'étape 1}
+Reconstruction du graphe : \textbf{O(n+ns)=O(n+e)}. Même compléxité que l'étape 3.
+\hfill \break
 
+\subsubsection{Construction de l'étape 1}
+\begin{lstlisting}
+ConstructionEtape1( Graphe G, int valeur ): Graphe
+    G.changerArc(s' -> s, capacite)
+    retourner(G)
+Fin
+\end{lstlisting}
+Cette fonction consiste juste à changer la capacité de l'arc s' vers s. La complexité est donc constante, en \textbf{O(1)}. 
+
+\subsubsection{Avantages et possibles améliorations de l'implémentation}
+Nous avons déjà vu que notre modèle objet permet une meilleure complexité. En effet en cumulant les structures de données, nous sacrifions un peu d'espace mémoire au profit d'optimisations. 
+
+La complexité générale est la somme des complexités de toutes les étapes. Cependant les étapes 2, 1, le préflot (O(n²+e)) et la récupération du résultat (O(lh+l+h) = O(lh))  sont répétés au maximum max(lignes, colonnes). La complexité générale reste donc polynomiale en O( 1 + lh + 2(n+e) + max(l,h)(n+e + 1 + lh)).
+Elle pourrait sans doute être améliorée en factorisant du code entre les étapes, et surtout en changeant la méthode pour récupérer le résultat sans réinitialiser tout le tableau à chaque itérations.
+
+Enfin, même si notre implémentation est opérationnelle pour énormément d'exemples, il peut arriver que certains totaux en ligne et en colonnes ne soient pas suffisants (uniquement pour des tableaux dont les tailles en ligne et en colonne sont assez grandes et diférentes).
 \end{document}
+
 

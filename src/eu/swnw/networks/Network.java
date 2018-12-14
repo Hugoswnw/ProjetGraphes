@@ -35,17 +35,8 @@ public class Network {
         this.sink = nodes.get(sink);
     }
 
-    //Etape 1
+
     public Network constructionEtape1(int value){
-        Node newSource = new Node(source.getName()+"new");
-        this.nodes.put(newSource.getName(), newSource);
-        this.edges.add(new Edge(newSource, this.source, 0, value));
-        this.source = newSource;
-
-        return this;
-    }
-
-    public Network constructionEtape1_2(int value){
         this.nodes.get("snew").getEdgesOut().get("s").setCapacity(value);
         return this;
     }

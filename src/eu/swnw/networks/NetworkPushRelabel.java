@@ -54,7 +54,7 @@ public class NetworkPushRelabel extends Network{
         return new NetworkPushRelabel(nodes, edges, nodes.get(G.source.getName()),  nodes.get(G.sink.getName()));
     }
 
-    public void preflot(){
+    public void preflot(boolean debug){
         init();
         boolean stop = false;
         while(!stop){
@@ -62,13 +62,13 @@ public class NetworkPushRelabel extends Network{
             for(Node n : nodes.values()){
                 NodePushRelabel u = (NodePushRelabel) n;
                 if(preconRelabel(u)) {
-                    relabel(u);
+                    relabel(u, debug);
                     stop = false;
                 }
                 for (Edge e : u.getEdgesOut().values()) {
                     EdgePushRelabel out = (EdgePushRelabel) e;
                     if(preconPush(out)){
-                        push(out);
+                        push(out, debug);
                         stop = false;
                     }
                 }
@@ -106,13 +106,14 @@ public class NetworkPushRelabel extends Network{
         return false;
     }
 
-    private void push(EdgePushRelabel e){
+    private void push(EdgePushRelabel e, boolean debug){
         NodePushRelabel u = ((NodePushRelabel) e.getFrom()), v = ((NodePushRelabel) e.getTo());
         int d = Math.min(u.getExcess(), e.getCapacity()-e.getFlow());
         e.incrementFlow(d);
         u.incrementExcess(-d);
         v.incrementExcess(d);
-        System.out.println("-- relabel "+u+" -> "+v);
+        if(debug)
+            System.out.println("-- relabel "+u+" -> "+v);
     }
 
     private boolean preconRelabel(NodePushRelabel u){
@@ -124,7 +125,7 @@ public class NetworkPushRelabel extends Network{
         return false;
     }
 
-    private void relabel(NodePushRelabel u){
+    private void relabel(NodePushRelabel u, boolean debug){
 
         int min = Integer.MAX_VALUE;
         for(Edge out: u.getEdgesOut().values())
@@ -138,7 +139,8 @@ public class NetworkPushRelabel extends Network{
             }
 
         u.setHeight(min+1);
-        System.out.println("-- push "+u);
+        if(debug)
+            System.out.println("-- push "+u);
     }
 
 

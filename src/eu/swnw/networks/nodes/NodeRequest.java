@@ -17,6 +17,10 @@ public class NodeRequest extends Node{
         this.request += request;
     }
 
+    public void setRequest(int request){
+        this.request = request;
+    }
+
     @Override
     public String toString(){
         return name+"(r"+request+")";
